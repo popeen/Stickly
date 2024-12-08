@@ -8,6 +8,7 @@ namespace Stickly
     public partial class Form1 : Form
     {
         private const string saveFile = "stickly.json";
+        private const int borderWidth = 2; // Width of the custom border
 
         public Form1()
         {
@@ -19,17 +20,33 @@ namespace Stickly
             noteTextBox.Dock = DockStyle.Fill;
         }
 
+        private void OnPaint(object sender, PaintEventArgs e)
+        {
+            // Draw the custom border
+            using (Pen pen = new Pen(Color.FromArgb(60, 60, 63), borderWidth))
+            {
+                e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
+            }
+        }
+
         private void SaveFormData()
         {
             try
             {
+                var oldFormData = new FormData();
+                if (File.Exists(saveFile))
+                {
+                    oldFormData = JsonSerializer.Deserialize<FormData>(File.ReadAllText(saveFile));
+                }
+
                 var formData = new FormData
                 {
                     Text = noteTextBox.Text,
                     LocationX = this.Location.X,
                     LocationY = this.Location.Y,
                     Width = this.Size.Width,
-                    Height = this.Size.Height
+                    Height = this.Size.Height,
+                    CustomTitleBar = oldFormData.CustomTitleBar
                 };
 
                 var json = JsonSerializer.Serialize(formData);
@@ -61,6 +78,16 @@ namespace Stickly
                         if (!IsFormFullyVisibleOnScreen())
                         {
                             MoveFormToDefaultPosition();
+                        }
+
+
+                        if (formData.CustomTitleBar)
+                        {
+                            customTitleBar.Visible = true;
+                            closeButton.Visible = true;
+                            FormBorderStyle = FormBorderStyle.None;
+                            this.Padding = new Padding(borderWidth); // Add padding for the custom border
+                            this.Paint += new PaintEventHandler(OnPaint); // Handle the Paint event
                         }
                     }
                 }
@@ -114,6 +141,33 @@ namespace Stickly
             SaveFormData();
         }
 
+        private void CustomTitleBar_MouseDown(object sender, MouseEventArgs e)
+        {
+            isDragging = true;
+            lastCursor = Cursor.Position;
+            lastForm = this.Location;
+        }
+
+        private void CustomTitleBar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                this.Location = new Point(
+                    lastForm.X + Cursor.Position.X - lastCursor.X,
+                    lastForm.Y + Cursor.Position.Y - lastCursor.Y);
+            }
+        }
+
+        private void CustomTitleBar_MouseUp(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
     }
     public class FormData
     {
@@ -122,6 +176,7 @@ namespace Stickly
         public int LocationY { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public bool CustomTitleBar { get; set; }
 
     }
 
