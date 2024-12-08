@@ -26,3 +26,10 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish build artifacts
+      run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -o ./publish
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: stickly-artifacts
+        path: ./publish/Stickly.exe
