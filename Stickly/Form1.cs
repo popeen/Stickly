@@ -91,8 +91,9 @@ namespace Stickly
 
         private void MoveFormToDefaultPosition()
         {
+            var primaryScreenBounds = Screen.PrimaryScreen.Bounds;
             // Top right corner of the screen with some margin to not block the close button of other windows
-            MoveForm(Screen.FromControl(this).Bounds.Right - this.Width - 20, 40);
+            MoveForm(primaryScreenBounds.Right - this.Width - 20, 40);
         }
 
         private bool IsFormFullyVisibleOnScreen()
