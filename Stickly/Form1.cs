@@ -8,7 +8,7 @@ namespace Stickly
     public partial class Form1 : Form
     {
         private const string saveFile = "stickly.json";
-        private const int borderWidth = 2; // Width of the custom border
+        private const int borderWidth = 3; // Width of the custom border
 
         public Form1()
         {
@@ -88,6 +88,7 @@ namespace Stickly
                             FormBorderStyle = FormBorderStyle.None;
                             this.Padding = new Padding(borderWidth); // Add padding for the custom border
                             this.Paint += new PaintEventHandler(OnPaint); // Handle the Paint event
+                            ResizeForm(formData.Width, formData.Height); // We need to resize the form again or the form will shrink by the height of the titlebar every time it reopens
                         }
                     }
                 }
@@ -167,6 +168,59 @@ namespace Stickly
         {
             this.Close();
         }
+
+
+
+        // Override WndProc to handle resizing
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_NCHITTEST = 0x84;
+            const int HTCLIENT = 1;
+            const int HTCAPTION = 2;
+            const int HTLEFT = 10;
+            const int HTRIGHT = 11;
+            const int HTTOP = 12;
+            const int HTTOPLEFT = 13;
+            const int HTTOPRIGHT = 14;
+            const int HTBOTTOM = 15;
+            const int HTBOTTOMLEFT = 16;
+            const int HTBOTTOMRIGHT = 17;
+
+            if (m.Msg == WM_NCHITTEST)
+            {
+                base.WndProc(ref m);
+                if ((int)m.Result == HTCLIENT)
+                {
+                    Point pt = PointToClient(new Point(m.LParam.ToInt32()));
+                    if (pt.X < borderWidth)
+                    {
+                        if (pt.Y < borderWidth)
+                            m.Result = (IntPtr)HTTOPLEFT;
+                        else if (pt.Y > ClientSize.Height - borderWidth)
+                            m.Result = (IntPtr)HTBOTTOMLEFT;
+                        else
+                            m.Result = (IntPtr)HTLEFT;
+                    }
+                    else if (pt.X > ClientSize.Width - borderWidth)
+                    {
+                        if (pt.Y < borderWidth)
+                            m.Result = (IntPtr)HTTOPRIGHT;
+                        else if (pt.Y > ClientSize.Height - borderWidth)
+                            m.Result = (IntPtr)HTBOTTOMRIGHT;
+                        else
+                            m.Result = (IntPtr)HTRIGHT;
+                    }
+                    else if (pt.Y < borderWidth)
+                        m.Result = (IntPtr)HTTOP;
+                    else if (pt.Y > ClientSize.Height - borderWidth)
+                        m.Result = (IntPtr)HTBOTTOM;
+                }
+                Invalidate(); // Invalidate the form to trigger a repaint
+                return;
+            }
+            base.WndProc(ref m);
+        }
+
 
     }
     public class FormData
