@@ -13,7 +13,6 @@ namespace Stickly
         public Form1()
         {
             InitializeComponent();
-            this.TopMost = true; // Set the form to always be on top
             LoadFormData();
             noteTextBox.TextChanged += new EventHandler(OnTextChanged);
             this.FormClosing += new FormClosingEventHandler(OnFormClosing);
@@ -80,6 +79,10 @@ namespace Stickly
                             MoveFormToDefaultPosition();
                         }
 
+                        if(formData.AlwaysOnTop)
+                        {
+                            this.TopMost = true;
+                        }
 
                         if (formData.CustomTitleBar)
                         {
@@ -96,6 +99,7 @@ namespace Stickly
                 {
                     // If there is no config file, move the form to the top right of the screen
                     MoveFormToDefaultPosition();
+                    this.TopMost = true; // Set the form to always be on top
                 }
             }
             catch (Exception ex)
@@ -231,6 +235,7 @@ namespace Stickly
         public int Width { get; set; }
         public int Height { get; set; }
         public bool CustomTitleBar { get; set; }
+        public bool AlwaysOnTop { get; set; } = true;
 
     }
 
