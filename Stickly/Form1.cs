@@ -229,13 +229,13 @@ namespace Stickly
     }
     public class FormData
     {
-        public string Text { get; set; }
-        public int LocationX { get; set; }
-        public int LocationY { get; set; }
+        public bool AlwaysOnTop { get; set; } = true;
+        public bool CustomTitleBar { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public bool CustomTitleBar { get; set; }
-        public bool AlwaysOnTop { get; set; } = true;
+        public int LocationX { get; set; }
+        public int LocationY { get; set; }
+        public string Text { get; set; }
 
     }
 
