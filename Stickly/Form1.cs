@@ -13,6 +13,7 @@ namespace Stickly
         private const string saveFile = "stickly.json";
         private const int borderWidth = 3;
         private FormData saveData = new FormData();
+        private FileSystemWatcher fileWatcher;
 
         public Form1()
         {
@@ -21,12 +22,52 @@ namespace Stickly
             noteTextBox.TextChanged += new EventHandler(OnTextChanged);
             this.FormClosing += new FormClosingEventHandler(OnFormClosing);
             noteTextBox.Dock = DockStyle.Fill;
+
+            if (saveData.ListenForSavefileChanges)
+            {
+                InitializeFileWatcher();
+            }
+        }
+
+        private void InitializeFileWatcher()
+        {
+            string directory = AppDomain.CurrentDomain.BaseDirectory; // Get the application's base directory
+            string fullPath = Path.Combine(directory, saveFile); // Combine the base directory with the save file name
+
+            if (Directory.Exists(directory) && File.Exists(fullPath))
+            {
+                fileWatcher = new FileSystemWatcher
+                {
+                    Path = directory,
+                    Filter = Path.GetFileName(saveFile),
+                    NotifyFilter = NotifyFilters.LastWrite
+                };
+
+                fileWatcher.Changed += OnSaveFileChanged;
+                fileWatcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private void OnSaveFileChanged(object sender, FileSystemEventArgs e)
+        {
+            // Reload the form data on a separate thread to avoid cross-thread operation exceptions
+            this.Invoke((MethodInvoker)delegate
+            {
+                LoadFormData();
+            });
         }
 
         private void SaveFormData()
         {
             try
             {
+
+                // Temporarily disable the FileSystemWatcher to avoid triggering it when we update the file
+                if (fileWatcher != null)
+                {
+                    fileWatcher.EnableRaisingEvents = false;
+                }
+
                 saveData.Text = noteTextBox.Text;
                 saveData.LocationX = this.Location.X;
                 saveData.LocationY = this.Location.Y;
@@ -35,6 +76,12 @@ namespace Stickly
 
                 var json = JsonSerializer.Serialize(saveData);
                 File.WriteAllText(saveFile, json);
+
+                // Re-enable the FileSystemWatcher
+                if (fileWatcher != null)
+                {
+                    fileWatcher.EnableRaisingEvents = true;
+                }
 
             }
             catch (Exception ex)
@@ -89,7 +136,6 @@ namespace Stickly
 
                 noteTextBox.Text = saveData.Text;
 
-
                 this.TopMost = saveData.AlwaysOnTop;
 
                 if (saveData.CustomTitleBar)
@@ -106,7 +152,6 @@ namespace Stickly
                 // We put this at the end since the size of the form can change and if it does it can lead to form being smaller and smaller on every restart unless we do this
                 ResizeForm(saveData.Width, saveData.Height);
 
-                SaveFormData();
             }
             catch (Exception ex)
             {
@@ -237,6 +282,7 @@ namespace Stickly
     {
         public bool AlwaysOnTop { get; set; } = true;
         public bool CustomTitleBar { get; set; } = true;
+        public bool ListenForSavefileChanges { get; set; } = true;
         public Colors Colors { get; set; } = new Colors();
         public int Width { get; set; } = 252;
         public int Height { get; set; } = 220;
