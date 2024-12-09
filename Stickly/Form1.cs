@@ -1,10 +1,4 @@
-using System;
-using System.Drawing.Imaging;
-using System.Globalization;
 using System.Text.Json;
-using System.Windows.Forms;
-using System.Drawing;
-using static System.Windows.Forms.DataFormats;
 
 namespace Stickly
 {
@@ -13,7 +7,7 @@ namespace Stickly
         private const string saveFile = "stickly.json";
         private const int borderWidth = 3;
         private FormData saveData = new FormData();
-        private FileSystemWatcher fileWatcher;
+        private FileSystemWatcher? fileWatcher;
 
         public Form1()
         {
@@ -84,7 +78,7 @@ namespace Stickly
                 }
 
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Could not save the data");
             }
@@ -100,7 +94,7 @@ namespace Stickly
             closeButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonBackground);
             closeButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonText);
         }
-        private void DrawBoarderOnPaint(object sender, PaintEventArgs e)
+        private void DrawBoarderOnPaint(object? sender, PaintEventArgs e)
         {
             // Draw the custom border
             using (Pen pen = new Pen(ColorTranslator.FromHtml(saveData.Colors.Border), borderWidth))
@@ -116,7 +110,7 @@ namespace Stickly
                 if (File.Exists(saveFile))
                 {
                     var json = File.ReadAllText(saveFile);
-                    saveData = JsonSerializer.Deserialize<FormData>(json);
+                    saveData = JsonSerializer.Deserialize<FormData>(json) ?? new FormData();
 
                     ResizeForm(saveData.Width, saveData.Height);
                     MoveForm(saveData.LocationX, saveData.LocationY);
@@ -153,7 +147,7 @@ namespace Stickly
                 ResizeForm(saveData.Width, saveData.Height);
 
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("There was an error when loading the savefile");
             }
@@ -174,9 +168,18 @@ namespace Stickly
 
         private void MoveFormToDefaultPosition()
         {
-            var primaryScreenBounds = Screen.PrimaryScreen.Bounds;
-            // Top right corner of the screen with some margin to not block the close button of other windows
-            MoveForm(primaryScreenBounds.Right - this.Width - 20, 40);
+            var primaryScreen = Screen.PrimaryScreen;
+            if (primaryScreen != null)
+            {
+                var primaryScreenBounds = primaryScreen.Bounds;
+                // Top right corner of the screen with some margin to not block the close button of other windows
+                MoveForm(primaryScreenBounds.Right - this.Width - 20, 40);
+            }
+            else
+            {
+                // This shouldn't happen but if it does, default to top left corner instead of crashing
+                MoveForm(0, 0); // Default to top-left corner
+            }
         }
 
         private bool IsFormFullyVisibleOnScreen()
@@ -187,12 +190,12 @@ namespace Stickly
         }
 
 
-        private void OnTextChanged(object sender, EventArgs e)
+        private void OnTextChanged(object? sender, EventArgs e)
         {
             SaveFormData();
         }
 
-        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing(object? sender, FormClosingEventArgs e)
         {
             SaveFormData();
         }
@@ -231,7 +234,6 @@ namespace Stickly
         {
             const int WM_NCHITTEST = 0x84;
             const int HTCLIENT = 1;
-            const int HTCAPTION = 2;
             const int HTLEFT = 10;
             const int HTRIGHT = 11;
             const int HTTOP = 12;
