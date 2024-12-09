@@ -104,7 +104,9 @@ namespace Stickly
                 UpdateStyling();
 
                 // We put this at the end since the size of the form can change and if it does it can lead to form being smaller and smaller on every restart unless we do this
-                ResizeForm(saveData.Width, saveData.Height); 
+                ResizeForm(saveData.Width, saveData.Height);
+
+                SaveFormData();
             }
             catch (Exception ex)
             {
