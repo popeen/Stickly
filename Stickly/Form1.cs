@@ -8,7 +8,8 @@ namespace Stickly
     public partial class Form1 : Form
     {
         private const string saveFile = "stickly.json";
-        private const int borderWidth = 3; // Width of the custom border
+        private const int borderWidth = 3;
+        private FormData saveData = new FormData();
 
         public Form1()
         {
@@ -32,23 +33,13 @@ namespace Stickly
         {
             try
             {
-                var oldFormData = new FormData();
-                if (File.Exists(saveFile))
-                {
-                    oldFormData = JsonSerializer.Deserialize<FormData>(File.ReadAllText(saveFile));
-                }
+                saveData.Text = noteTextBox.Text;
+                saveData.LocationX = this.Location.X;
+                saveData.LocationY = this.Location.Y;
+                saveData.Width = this.Size.Width;
+                saveData.Height = this.Size.Height;
 
-                var formData = new FormData
-                {
-                    Text = noteTextBox.Text,
-                    LocationX = this.Location.X,
-                    LocationY = this.Location.Y,
-                    Width = this.Size.Width,
-                    Height = this.Size.Height,
-                    CustomTitleBar = oldFormData.CustomTitleBar
-                };
-
-                var json = JsonSerializer.Serialize(formData);
+                var json = JsonSerializer.Serialize(saveData);
                 File.WriteAllText(saveFile, json);
             }
             catch (Exception ex)
@@ -64,43 +55,41 @@ namespace Stickly
                 if (File.Exists(saveFile))
                 {
                     var json = File.ReadAllText(saveFile);
-                    var formData = JsonSerializer.Deserialize<FormData>(json);
+                    saveData = JsonSerializer.Deserialize<FormData>(json);
 
-                    if (formData != null)
+                    ResizeForm(saveData.Width, saveData.Height);
+                    MoveForm(saveData.LocationX, saveData.LocationY);
+
+                    // Check if the last location is fully visible on the screen, if not move it to the top right of the screen
+                    if (!IsFormFullyVisibleOnScreen())
                     {
-                        noteTextBox.Text = formData.Text;
-
-                        ResizeForm(formData.Width, formData.Height);
-                        MoveForm(formData.LocationX, formData.LocationY);
-
-                        // Check if the last location is fully visible on the screen, if not move it to the top right of the screen
-                        if (!IsFormFullyVisibleOnScreen())
-                        {
-                            MoveFormToDefaultPosition();
-                        }
-
-                        if(formData.AlwaysOnTop)
-                        {
-                            this.TopMost = true;
-                        }
-
-                        if (formData.CustomTitleBar)
-                        {
-                            customTitleBar.Visible = true;
-                            closeButton.Visible = true;
-                            FormBorderStyle = FormBorderStyle.None;
-                            this.Padding = new Padding(borderWidth); // Add padding for the custom border
-                            this.Paint += new PaintEventHandler(OnPaint); // Handle the Paint event
-                            ResizeForm(formData.Width, formData.Height); // We need to resize the form again or the form will shrink by the height of the titlebar every time it reopens
-                        }
+                        MoveFormToDefaultPosition();
                     }
+
                 }
                 else
                 {
                     // If there is no config file, move the form to the top right of the screen
                     MoveFormToDefaultPosition();
-                    this.TopMost = true; // Set the form to always be on top
                 }
+
+                noteTextBox.Text = saveData.Text;
+
+
+                this.TopMost = saveData.AlwaysOnTop;
+
+                if (saveData.CustomTitleBar)
+                {
+                    customTitleBar.Visible = true;
+                    closeButton.Visible = true;
+                    FormBorderStyle = FormBorderStyle.None;
+                    this.Padding = new Padding(borderWidth); // Add padding for the custom border
+                    this.Paint += new PaintEventHandler(OnPaint); // Handle the Paint event
+                }
+
+                // We put this at the end since the size of the form can change and if it does it can lead to form being smaller and smaller on every restart unless we do this
+                ResizeForm(saveData.Width, saveData.Height); 
+
             }
             catch (Exception ex)
             {
@@ -230,12 +219,12 @@ namespace Stickly
     public class FormData
     {
         public bool AlwaysOnTop { get; set; } = true;
-        public bool CustomTitleBar { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public bool CustomTitleBar { get; set; } = true;
+        public int Width { get; set; } = 252;
+        public int Height { get; set; } = 220;
         public int LocationX { get; set; }
         public int LocationY { get; set; }
-        public string Text { get; set; }
+        public string Text { get; set; } = String.Empty;
 
     }
 
