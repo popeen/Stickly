@@ -1,6 +1,9 @@
 using System;
+using System.Drawing.Imaging;
+using System.Globalization;
 using System.Text.Json;
 using System.Windows.Forms;
+using System.Drawing;
 using static System.Windows.Forms.DataFormats;
 
 namespace Stickly
@@ -20,15 +23,6 @@ namespace Stickly
             noteTextBox.Dock = DockStyle.Fill;
         }
 
-        private void OnPaint(object sender, PaintEventArgs e)
-        {
-            // Draw the custom border
-            using (Pen pen = new Pen(Color.FromArgb(60, 60, 63), borderWidth))
-            {
-                e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
-            }
-        }
-
         private void SaveFormData()
         {
             try
@@ -41,10 +35,30 @@ namespace Stickly
 
                 var json = JsonSerializer.Serialize(saveData);
                 File.WriteAllText(saveFile, json);
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Could not save the data");
+            }
+        }
+
+        public void UpdateStyling()
+        {
+            this.BackColor = ColorTranslator.FromHtml(saveData.Colors.Background);
+            noteTextBox.BackColor = ColorTranslator.FromHtml(saveData.Colors.Background);
+            noteTextBox.ForeColor = ColorTranslator.FromHtml(saveData.Colors.Text);
+            customTitleBar.BackColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarBackground);
+            customTitleBar.ForeColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarText);
+            closeButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonBackground);
+            closeButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonText);
+        }
+        private void DrawBoarderOnPaint(object sender, PaintEventArgs e)
+        {
+            // Draw the custom border
+            using (Pen pen = new Pen(ColorTranslator.FromHtml(saveData.Colors.Border), borderWidth))
+            {
+                e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
             }
         }
 
@@ -84,12 +98,13 @@ namespace Stickly
                     closeButton.Visible = true;
                     FormBorderStyle = FormBorderStyle.None;
                     this.Padding = new Padding(borderWidth); // Add padding for the custom border
-                    this.Paint += new PaintEventHandler(OnPaint); // Handle the Paint event
+                    this.Paint += new PaintEventHandler(DrawBoarderOnPaint); // Handle the Paint event
                 }
+
+                UpdateStyling();
 
                 // We put this at the end since the size of the form can change and if it does it can lead to form being smaller and smaller on every restart unless we do this
                 ResizeForm(saveData.Width, saveData.Height); 
-
             }
             catch (Exception ex)
             {
@@ -220,11 +235,23 @@ namespace Stickly
     {
         public bool AlwaysOnTop { get; set; } = true;
         public bool CustomTitleBar { get; set; } = true;
+        public Colors Colors { get; set; } = new Colors();
         public int Width { get; set; } = 252;
         public int Height { get; set; } = 220;
         public int LocationX { get; set; }
         public int LocationY { get; set; }
         public string Text { get; set; } = String.Empty;
+
+    }
+    public class Colors
+    {
+        public string Background { get; set; } = "#212121";
+        public string Text { get; set; } = "#FFFFFF";
+        public string Border { get; set; } = "#3C3C3F";
+        public string TitleBarBackground { get; set; } = "#2D2D30";
+        public string TitleBarText { get; set; } = "#FFFFFF";
+        public string TitleBarButtonBackground { get; set; } = "#3C3C3F";
+        public string TitleBarButtonText { get; set; } = "#EEEEEE";
 
     }
 
