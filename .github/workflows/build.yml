@@ -33,7 +33,7 @@ jobs:
       run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: stickly-artifacts
         path: ./Stickly/bin/Release/net8.0-windows/win-x64/publish/Stickly.exe
