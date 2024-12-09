@@ -6,8 +6,8 @@ For now you have to compile it yourself to run it. I plan on creating a release 
 
 # Screenshots
 
-The default look is using the regular windows titlebar  
-![ScreenshotDefault](windowsTitlebar.png)
-
-However, if you want, you can also enable a custom titlebar that is a bit more subtle.  
+The default look is using a fully configurable custom titlebar
 ![ScreenshotCustomTitlebar](customTitlebar.png)
+
+If you really want to you can disable this in the config file and use a standard winforms titlebar instead
+![ScreenshotDefault](windowsTitlebar.png)
