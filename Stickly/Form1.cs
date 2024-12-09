@@ -91,9 +91,26 @@ namespace Stickly
             noteTextBox.ForeColor = ColorTranslator.FromHtml(saveData.Colors.Text);
             customTitleBar.BackColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarBackground);
             customTitleBar.ForeColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarText);
-            closeButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonBackground);
-            closeButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.TitleBarButtonText);
+
+            closeButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.CloseButtonBackground);
+            closeButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.CloseButtonText);
+
+            settingsButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.SettingsButtonBackground);
+            settingsButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.SettingsButtonText);
+
+            if (saveData.AlwaysOnTop)
+            {
+                pinButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.PinEnabledButtonBackground);
+                pinButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.PinEnabledButtonText);
+            }
+            else
+            {
+                pinButton.BackColor = ColorTranslator.FromHtml(saveData.Colors.PinDisabledButtonBackground);
+                pinButton.ForeColor = ColorTranslator.FromHtml(saveData.Colors.PinDisabledButtonText);
+            }
+
         }
+
         private void DrawBoarderOnPaint(object? sender, PaintEventArgs e)
         {
             // Draw the custom border
@@ -136,6 +153,8 @@ namespace Stickly
                 {
                     customTitleBar.Visible = true;
                     closeButton.Visible = true;
+                    settingsButton.Visible = true;
+                    pinButton.Visible = true;
                     FormBorderStyle = FormBorderStyle.None;
                     this.Padding = new Padding(borderWidth); // Add padding for the custom border
                     this.Paint += new PaintEventHandler(DrawBoarderOnPaint); // Handle the Paint event
@@ -227,6 +246,19 @@ namespace Stickly
             this.Close();
         }
 
+        private void SettingsButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PinButton_Click(object sender, EventArgs e)
+        {
+            saveData.AlwaysOnTop = !saveData.AlwaysOnTop;
+            this.TopMost = saveData.AlwaysOnTop;
+            SaveFormData();
+            UpdateStyling();
+        }
+
 
 
         // Override WndProc to handle resizing
@@ -300,8 +332,14 @@ namespace Stickly
         public string Border { get; set; } = "#3C3C3F";
         public string TitleBarBackground { get; set; } = "#2D2D30";
         public string TitleBarText { get; set; } = "#FFFFFF";
-        public string TitleBarButtonBackground { get; set; } = "#3C3C3F";
-        public string TitleBarButtonText { get; set; } = "#EEEEEE";
+        public string CloseButtonBackground { get; set; } = "#3C3C3F";
+        public string CloseButtonText { get; set; } = "#EEEEEE";
+        public string SettingsButtonBackground { get; set; } = "#3C3C3F";
+        public string SettingsButtonText { get; set; } = "#EEEEEE";
+        public string PinEnabledButtonBackground { get; set; } = "#3C3C3F";
+        public string PinEnabledButtonText { get; set; } = "#55AB55";
+        public string PinDisabledButtonBackground { get; set; } = "#3C3C3F";
+        public string PinDisabledButtonText { get; set; } = "#BF5C62";
 
     }
 

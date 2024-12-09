@@ -1,4 +1,6 @@
-﻿namespace Stickly;
+﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+
+namespace Stickly;
 
 partial class Form1
 {
@@ -29,6 +31,8 @@ partial class Form1
         noteTextBox = new RichTextBox();
         customTitleBar = new Panel();
         closeButton = new Button();
+        settingsButton = new Button();
+        pinButton = new Button();
         SuspendLayout();
         // 
         // noteTextBox
@@ -50,6 +54,8 @@ partial class Form1
         customTitleBar.Dock = DockStyle.Top;
         customTitleBar.Height = 32;
         customTitleBar.Controls.Add(closeButton);
+        customTitleBar.Controls.Add(settingsButton);
+        customTitleBar.Controls.Add(pinButton);
         customTitleBar.MouseDown += new MouseEventHandler(CustomTitleBar_MouseDown);
         customTitleBar.MouseMove += new MouseEventHandler(CustomTitleBar_MouseMove);
         customTitleBar.MouseUp += new MouseEventHandler(CustomTitleBar_MouseUp);
@@ -67,6 +73,32 @@ partial class Form1
         closeButton.Location = new Point(customTitleBar.Width - closeButton.Width - 4, 4);
         closeButton.Click += new EventHandler(CloseButton_Click);
         closeButton.Visible = false;
+        // 
+        // settingsButton
+        // 
+        settingsButton.Text = ". . .";
+        settingsButton.BackColor = Color.FromArgb(60, 60, 63);
+        settingsButton.ForeColor = Color.White;
+        settingsButton.FlatStyle = FlatStyle.Flat;
+        settingsButton.FlatAppearance.BorderSize = 0;
+        settingsButton.Size = new Size(30, 24);
+        settingsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        settingsButton.Location = new Point(customTitleBar.Width - closeButton.Width - settingsButton.Width - 8, 4);
+        settingsButton.Click += new EventHandler(SettingsButton_Click);
+        settingsButton.Visible = false;
+        // 
+        // pinButton
+        // 
+        pinButton.Text = "📌";
+        pinButton.BackColor = Color.FromArgb(60, 60, 63);
+        pinButton.ForeColor = Color.White;
+        pinButton.FlatStyle = FlatStyle.Flat;
+        pinButton.FlatAppearance.BorderSize = 0;
+        pinButton.Size = new Size(24, 24);
+        pinButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        pinButton.Location = new Point(customTitleBar.Width - closeButton.Width - settingsButton.Width - pinButton.Width - 12, 4);
+        pinButton.Click += new EventHandler(PinButton_Click);
+        pinButton.Visible = false;
         // 
         // Form1
         // 
@@ -87,6 +119,8 @@ partial class Form1
     private RichTextBox noteTextBox;
     private Panel customTitleBar;
     private Button closeButton;
+    private Button settingsButton;
+    private Button pinButton;
     private bool isDragging = false;
     private Point lastCursor;
     private Point lastForm;
