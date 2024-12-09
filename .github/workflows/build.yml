@@ -37,3 +37,4 @@ jobs:
       with:
         name: stickly-artifacts
         path: ./Stickly/bin/Release/net8.0-windows/win-x64/publish/Stickly.exe
+        compression-level: 0
