@@ -309,8 +309,6 @@ namespace Stickly
             }
             base.WndProc(ref m);
         }
-
-
     }
     public class FormData
     {
@@ -333,13 +331,13 @@ namespace Stickly
         public string TitleBarBackground { get; set; } = "#2D2D30";
         public string TitleBarText { get; set; } = "#FFFFFF";
         public string CloseButtonBackground { get; set; } = "#3C3C3F";
-        public string CloseButtonText { get; set; } = "#EEEEEE";
+        public string CloseButtonText { get; set; } = "#FF636E";
         public string SettingsButtonBackground { get; set; } = "#3C3C3F";
         public string SettingsButtonText { get; set; } = "#EEEEEE";
         public string PinEnabledButtonBackground { get; set; } = "#3C3C3F";
         public string PinEnabledButtonText { get; set; } = "#55AB55";
         public string PinDisabledButtonBackground { get; set; } = "#3C3C3F";
-        public string PinDisabledButtonText { get; set; } = "#BF5C62";
+        public string PinDisabledButtonText { get; set; } = "#FF636E";
 
     }
 
