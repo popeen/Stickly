@@ -248,7 +248,11 @@ namespace Stickly
 
         private void SettingsButton_Click(object sender, EventArgs e)
         {
-
+            settingsContextMenu.Show(settingsButton, new Point(0, settingsButton.Height));
+        }
+        private void CheckForUpdates_Click(object sender, EventArgs e)
+        {
+            // TODO, check for updates
         }
 
         private void PinButton_Click(object sender, EventArgs e)

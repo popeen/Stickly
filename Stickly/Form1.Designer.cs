@@ -33,6 +33,7 @@ partial class Form1
         closeButton = new Button();
         settingsButton = new Button();
         pinButton = new Button();
+        settingsContextMenu = new ContextMenuStrip();
         SuspendLayout();
         // 
         // noteTextBox
@@ -87,6 +88,12 @@ partial class Form1
         settingsButton.Click += new EventHandler(SettingsButton_Click);
         settingsButton.Visible = false;
         // 
+        // settingsContextMenu
+        // 
+        settingsContextMenu.Items.AddRange(new ToolStripItem[] {
+            new ToolStripMenuItem("Check for updates", null, CheckForUpdates_Click)
+        });
+        // 
         // pinButton
         // 
         pinButton.Text = "📌";
@@ -121,6 +128,7 @@ partial class Form1
     private Button closeButton;
     private Button settingsButton;
     private Button pinButton;
+    private ContextMenuStrip settingsContextMenu;
     private bool isDragging = false;
     private Point lastCursor;
     private Point lastForm;
