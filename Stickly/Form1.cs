@@ -221,14 +221,9 @@ namespace Stickly
 
         private string GetCurrentVersion()
         {
-            var version = Assembly.GetExecutingAssembly()
-                                  .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                                  .InformationalVersion;
-            if (Version.TryParse(version, out Version? parsedVersion))
-            {
-                return parsedVersion.ToString();
-            }
-            return "1.0.0.0"; // If parsing fails, return a dummy version number
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            // If version is null, return a dummy version number
+            return version != null ? version.ToString() : "1.0.0.0";
         }
 
         private static async Task<Release> GetLatestVersionAsync()
