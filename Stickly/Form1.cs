@@ -282,6 +282,10 @@ namespace Stickly
                     });
                 }
             }
+            else
+            {
+                MessageBox.Show("You are already using the latest version");
+            }
         }
 
         private void CloseButton_Click(object sender, EventArgs e)
