@@ -7,4 +7,4 @@ https://github.com/popeen/Stickly/releases/
 
 # Screenshots
 
-![ScreenshotCustomTitlebar](customTitlebar.png)
+![Screenshot](screenshot.png)
