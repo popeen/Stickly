@@ -1,5 +1,5 @@
 # What is Stickly
-A very simple sticky note application that will always show on top of other applications
+A customizable sticky note application that will always show on top of other applications unless you don't want it to
 
 # Installation
 You can download it from here and then just run the exe, no installation needed   
