@@ -1,4 +1,5 @@
-﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+﻿using System.Resources;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Stickly;
 
@@ -28,6 +29,8 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
         noteTextBox = new RichTextBox();
         customTitleBar = new Panel();
         closeButton = new Button();
@@ -118,6 +121,7 @@ partial class Form1
         ForeColor = SystemColors.ControlLight;
         FormBorderStyle = FormBorderStyle.SizableToolWindow;
         Margin = new Padding(2);
+        Icon = (Icon)resources.GetObject("$this.Icon");
         Name = "Form1";
         Text = "Stickly";
         ResumeLayout(false);
